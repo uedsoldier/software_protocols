@@ -1,15 +1,14 @@
 /**
- @file serial_sw.c
- @brief Librería que implementa comunicación serial por software para microcontrolladores de 8 bits
- @author Ing. José Roberto Parra Trewartha
+ * @file serial_sw.c
+ * @brief Librería que implementa comunicación serial por software para microcontrolladores de 8 bits en su modalidad 8N1
+ * @author Ing. José Roberto Parra Trewartha
 */
 
 #include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "funciones_auxiliares.h"
+#include "../../utils/utils.h"
 #include "serial_sw.h"
-
 
 /**
   * @brief Función para configurar los pines RX y TX como E/S, y dichos pines se definien en el archivo serial_sw.h.
@@ -17,12 +16,11 @@
   * @param (void)
   * @return (void)
 */
-void serial_sw_init()
-{
-    //Configuración de pines RX y TX
-    SW_TX_TRIS = 0;
-    SW_TX = 1;
-    SW_RX_TRIS = 1;
+void serial_sw_init() {
+  //Configuración de pines RX y TX
+  SW_TX_TRIS = 0;
+  SW_TX = 1;
+  SW_RX_TRIS = 1;
 }
 
 /**
@@ -30,22 +28,20 @@ void serial_sw_init()
   * @param dato: (uint8_t) Byte a transmitir 
   * @return (void) retval
 */
-void serial_sw_writeByte(uint8_t dato)
-{
-    uint8_t bit_count = 8;
-    //START
-    SW_TX = 0;
-    _delay(CYCLES_DELAY_TX_BIT);
-    
-    while(bit_count--)
-    {
-        SW_TX = dato & 0x01;
-        _delay(CYCLES_DELAY_TX_BIT);
-        dato >>= 1;
-    }
-    //STOP
-    SW_TX = 1;
-    _delay(CYCLES_DELAY_TX_BIT);
+void serial_sw_writeByte(uint8_t dato) {
+  uint8_t bit_count = 8;
+  //START
+  SW_TX = 0;
+  _delay(CYCLES_DELAY_TX_BIT);
+
+  while(bit_count--) {
+      SW_TX = dato & 0x01;
+      _delay(CYCLES_DELAY_TX_BIT);
+      dato >>= 1;
+  }
+  //STOP
+  SW_TX = 1;
+  _delay(CYCLES_DELAY_TX_BIT);
 }
 
 /**
@@ -54,21 +50,19 @@ void serial_sw_writeByte(uint8_t dato)
   * @param (void)
   * @return (uint8_t) Dato de 8 bits que ha sido recibido mediante USART por software
 */
-uint8_t serial_sw_readByte()
-{
-    uint8_t bit_count;
-    uint8_t dato=0;
-    //Espera condición START
-    while(SW_RX);
-    _delay(CYCLES_DELAY_RX_BIT);
-    _delay(CYCLES_DELAY_RX_HALFBIT);
-    for(bit_count=0; bit_count!=8;bit_count++)
-    {
-        if(SW_RX)
-            dato|=1<<bit_count;
-        _delay(CYCLES_DELAY_RX_BIT);
-    }
-    return dato;
+uint8_t serial_sw_readByte() {
+  uint8_t bit_count;
+  uint8_t dato=0;
+  //Espera condición START
+  while(SW_RX);
+  _delay(CYCLES_DELAY_RX_BIT);
+  _delay(CYCLES_DELAY_RX_HALFBIT);
+  for(bit_count=0; bit_count!=8;bit_count++) {
+      if(SW_RX)
+          dato|=1<<bit_count;
+      _delay(CYCLES_DELAY_RX_BIT);
+  }
+  return dato;
 }
 
 /**
@@ -76,10 +70,8 @@ uint8_t serial_sw_readByte()
   * @param cadena: (const char *) Apuntador a la cadena de caracteres que se desea transmitir.
   * @return (void)
 */
-void serial_sw_puts(const char *cadena)
-{
-    while(*cadena) //Mientras el valor de la cadena no sea \0, escribir caracter en la posición del apuntador
-    {
+void serial_sw_puts(const char *cadena) {
+    while(*cadena) { //Mientras el valor de la cadena no sea \0, escribir caracter en la posición del apuntador
         serial_sw_writeByte(*cadena); //Escribe bytes secuencialmente hasta terminar con la cadena
         cadena++;
     }
@@ -103,10 +95,8 @@ void serial_sw_writeLine(const char *cadena)
   * @param len: (uint16_t) Cantidad de elementos a copiar de un buffer a otro
   * @return (void)
 */
-void serial_sw_gets(uint8_t *buffer, uint16_t len)
-{
-    for(;len;len--)
-    {
+void serial_sw_gets(uint8_t *buffer, uint16_t len) {
+    for(;len;len--) {
         *buffer = serial_sw_readByte();    //Obtención de caracter del buffer serial, se almacena en el arreglo de caracteres
         buffer++; //se incremento de apuntador al arreglo
     }
@@ -117,10 +107,8 @@ void serial_sw_gets(uint8_t *buffer, uint16_t len)
   * @param dato: (uint16_t) Dato de 16 bits a trasmitir mediante USART por software
   * @return (void)
 */
-void serial_sw_writeInt16(uint16_t dato)
-{
-    for(uint8_t i=0;i!=sizeof(uint16_t);i++)
-    {
+void serial_sw_writeInt16(uint16_t dato) {
+    for(uint8_t i=0;i!=sizeof(uint16_t);i++) {
         serial_sw_writeByte(*((uint8_t *)&dato+i));
     }
 }
@@ -130,10 +118,8 @@ void serial_sw_writeInt16(uint16_t dato)
   * @param dato: (uint24_t) Dato de 24 bits a trasmitir mediante USART por software
   * @return (void)
 */
-void serial_sw_writeInt24(uint24_t dato)
-{
-    for(uint8_t i=0;i!=sizeof(uint24_t);i++)
-    {
+void serial_sw_writeInt24(uint24_t dato) {
+    for(uint8_t i=0;i!=sizeof(uint24_t);i++) {
         serial_sw_writeByte(*((uint8_t *)&dato+i));
     }
 }
@@ -143,10 +129,8 @@ void serial_sw_writeInt24(uint24_t dato)
   * @param dato: (uint32_t) Dato de 32 bits a trasmitir mediante USART por software
   * @return (void)
 */
-void serial_sw_writeInt32(uint32_t dato)
-{
-    for(uint8_t i=0;i!=sizeof(uint32_t);i++)
-    {
+void serial_sw_writeInt32(uint32_t dato) {
+    for(uint8_t i=0;i!=sizeof(uint32_t);i++) {
         serial_sw_writeByte(*((uint8_t *)&dato+i));
     }
 }
@@ -156,10 +140,8 @@ void serial_sw_writeInt32(uint32_t dato)
   * @param dato: (float) Dato flotante de 32(24) bits a trasmitir mediante USART por software
   * @return (void)
 */
-void serial_sw_writeFloat(float dato)
-{
-    for(uint8_t i=0;i!=sizeof(float);i++)
-    {
+void serial_sw_writeFloat(float dato) {
+    for(uint8_t i=0;i!=sizeof(float);i++) {
         serial_sw_writeByte(*((uint8_t *)&dato+i));
     }
 }
@@ -171,8 +153,7 @@ void serial_sw_writeFloat(float dato)
   * como una estructura de datos.
   * @return (void)
 */
-void serial_sw_write(void* datos, uint16_t len)
-{
+void serial_sw_write(void* datos, uint16_t len) {
 	uint8_t* _datos = (uint8_t *)datos;
 	while(len--)
 		serial_sw_writeByte(*_datos++);
@@ -183,13 +164,11 @@ void serial_sw_write(void* datos, uint16_t len)
   * @param (void)  
   * @return (uint16_t) Dato de 16 bits a recibir mediante USART por software.
 */
-uint16_t serial_sw_readInt16()
-{
+uint16_t serial_sw_readInt16() {
     uint16_t dato_leido;
     uint8_t * p_lectura;                    //Apuntador a variable entera de 16 bits
     p_lectura = (uint8_t *)&dato_leido;     //Asigna dirección de valor de retorno de tipo entero de 16 bits
-    for(uint8_t i=0;i!=sizeof(uint16_t);i++)
-    {
+    for(uint8_t i=0;i!=sizeof(uint16_t);i++) {
         *(p_lectura++) = serial_sw_readByte();      //Recepción de datos
     }
     return dato_leido;    //Retorno de valor de 16 bits leído 
@@ -200,13 +179,11 @@ uint16_t serial_sw_readInt16()
   * @param (void)  
   * @return (uint24_t) Dato de 24 bits a recibir mediante USART por software.
 */
-uint24_t serial_sw_readInt24()
-{
+uint24_t serial_sw_readInt24() {
     uint24_t dato_leido;
     uint8_t * p_lectura;                    //Apuntador a variable entera de 24 bits
     p_lectura = (uint8_t *)&dato_leido;     //Asigna dirección de valor de retorno de tipo entero de 24 bits
-    for(uint8_t i=0;i!=sizeof(uint24_t);i++)
-    {
+    for(uint8_t i=0;i!=sizeof(uint24_t);i++) {
         *(p_lectura++) = serial_sw_readByte();      //Recepción de datos
     }
     return dato_leido;    //Retorno de valor de 16 bits leído 
@@ -217,13 +194,11 @@ uint24_t serial_sw_readInt24()
   * @param (void)  
   * @return (uint32_t) Dato de 32 bits a recibir mediante USART por software.
 */
-uint32_t serial_sw_readInt32()
-{
+uint32_t serial_sw_readInt32() {
     uint32_t dato_leido;
     uint8_t * p_lectura;                    //Apuntador a variable entera de 32 bits
     p_lectura = (uint8_t *)&dato_leido;     //Asigna dirección de valor de retorno de tipo entero de 32 bits
-    for(uint8_t i=0;i!=sizeof(uint32_t);i++)
-    {
+    for(uint8_t i=0;i!=sizeof(uint32_t);i++) {
         *(p_lectura++) = serial_sw_readByte();      //Recepción de datos
     }
     return dato_leido;    //Retorno de valor de 16 bits leído 
@@ -234,13 +209,11 @@ uint32_t serial_sw_readInt32()
   * @param (void)  
   * @return (float) Dato flotante de 32(24) bits a recibir mediante USART por software
 */
-float serial_sw_readFloat()
-{
+float serial_sw_readFloat() {
     float dato_leido;
     uint8_t * p_lectura;                    //Apuntador a variable flotante de 32 bits
     p_lectura = (uint8_t *)&dato_leido;     //Asigna dirección de valor de retorno de tipo flotante de 32(24) bits
-    for(uint8_t i=0;i!=sizeof(float);i++)
-    {
+    for(uint8_t i=0;i!=sizeof(float);i++) {
         *(p_lectura++) = serial_sw_readByte();      //Recepción de datos
     }
     return dato_leido;    //Retorno de valor de 32(24) bits leído 
@@ -253,11 +226,9 @@ float serial_sw_readFloat()
   * como una estructura de datos.
   * @return (void)
 */
-void serial_sw_read(void* datos, uint16_t len)
-{
+void serial_sw_read(void* datos, uint16_t len) {
 	uint8_t* _datos = (uint8_t*)datos;           //Apuntador a variable
-	while(len--)
-	{
+	while(len--) {
 		*(_datos++) = serial_sw_readByte();      //Recepción de datos
 	}
 }

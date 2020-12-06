@@ -1,22 +1,21 @@
-/*
-    Librería de comunicación spi por software para microcontroladores PIC de 8 bits
-    Autor: Ing. José Roberto Parra Trewartha
-    Compilador: XC8
- */
+/**
+ * @file spi_sw.h
+ * @brief Librería que implementa comunicación spi por software para microcontroladores de 8 bits
+ * @author Ing. José Roberto Parra Trewartha
+*/
 
 #ifndef SPI_SW_H
 #define	SPI_SW_H
 
-/*
-	Número de bits por transmisión/recepción SPI, cuidado con utilizar un dato mayor 
-	a 8 bits y utilizar las funciones para enteros de 16 y 32 bits, y flotantes
+/**
+ * Número de bits por transmisión/recepción SPI, cuidado con utilizar un dato mayor a 8 bits y utilizar las funciones para enteros de 16 y 32 bits, y flotantes
 */
 
 #define SPI_SW_NUM_BITS_TX 16
 #define SPI_SW_NUM_BITS_RX 16
 
-/*
-Modos de comunicacion SPI: (CPOL,CPHA) (Polaridad de reloj, Fase de reloj)
+/**
+ * Modos de comunicacion SPI: (CPOL,CPHA) (Polaridad de reloj, Fase de reloj)
  * 
  * _______________________________________________________________________________
  * Modo |  Motorola  | Microchip |  Muestreo   |  Propagacion   | Estado inactivo |
@@ -37,7 +36,9 @@ Modos de comunicacion SPI: (CPOL,CPHA) (Polaridad de reloj, Fase de reloj)
 #define SPI_SW_MODE_10	2
 #define SPI_SW_MODE_11	3
 
-//Definición de tipos de datos según bits necesarios
+/**
+ * Definición de tipos de datos según bits necesarios
+ */
 #if SPI_SW_NUM_BITS_TX > 8
 	#if SPI_SW_NUM_BITS_TX > 16
 		typedef uint32_t tipo_dato_tx_spi_sw; 
@@ -74,8 +75,8 @@ typedef uint8_t tipo_dato_rx_spi_sw;
 #endif
 
 
-/*
-	Prototipos de funciones  
+/**
+ * Prototipos de funciones  
 */
 void spi_sw_init(uint8_t mode);
 void spi_sw_setMode(uint8_t newMode);        //Establece nuevo modo SPI en caso de usar dispositivos con otros modos de funcionamiento

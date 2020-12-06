@@ -1,17 +1,16 @@
-/*
-    Librería que implementa comunicación serial por software en su modalidad 8N1
-	Autor: Ing. José Roberto Parra Trewartha
-	Compilador: XC8
+/**
+ * @file serial_sw.h
+ * @brief Librería que implementa comunicación serial por software para microcontrolladores de 8 bits en su modalidad 8N1
+ * @author Ing. José Roberto Parra Trewartha
 */
-
 
 #define SW_BAUDRATE	9600UL														//Definición de velocidad de comunicación en bits por segundo. Cambiar según necesidades del proyecto.	
 #define CYCLES_DELAY_RX_BIT (((((2*_XTAL_FREQ)/(4*SW_BAUDRATE))+1)/2)-14)		//Retardo por bit en recepción
 #define CYCLES_DELAY_RX_HALFBIT (((((2*_XTAL_FREQ)/(8*SW_BAUDRATE))+1)/2)-9)	//Retardo por medio bit en recepción
 #define CYCLES_DELAY_TX_BIT (((((2*_XTAL_FREQ)/(4*SW_BAUDRATE))+1)/2)-12)		//Retardo por bit en transmisión
 
-/*
-	Definición de pines RX y TX para comunicación serial por software
+/**
+ * Definición de pines RX y TX para comunicación serial por software
 */
 #define SW_RX		PORTBbits.RB7
 #define SW_RX_TRIS	TRISBbits.TRISB7
@@ -19,8 +18,8 @@
 #define SW_TX       LATBbits.LATB6
 #define SW_TX_TRIS	TRISBbits.TRISB6
 
-/*
-	Prototipos de funciones
+/**
+ * Prototipos de funciones
 */
 void serial_sw_init(void);
 uint8_t serial_sw_readByte(void);
