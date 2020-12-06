@@ -1,0 +1,4 @@
+20-05-2018
+Se validó funcionamiento en simulación de todas las funciones
+22-01-2020
+Agregada enumeración de estados en escritura de byte: ACK, NACK y WCOL

@@ -1,0 +1,4 @@
+27-05-2018
+Migración terminada. Validar en aplicación
+27-05-2018
+Validación correcta en simulación.

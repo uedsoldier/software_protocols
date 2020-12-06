@@ -1,0 +1,6 @@
+25-07-2018
+Realización terminada y validación en simulación. Cuidado con altos baud rates como 115200, funciona mejor en más bajos como 4800, 9600 , etc.
+31-12-2019
+Se modificaron archivos .c y .h para obtener documentación al estilo javadoc
+02-01-2020
+Se agregaron funciones write y read para envío y recepción de cualquier tipo de dato. Pendientes de validar aún.
